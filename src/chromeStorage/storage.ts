@@ -15,6 +15,10 @@ const chromeStorage = {
 
     set: async (data: StorageData) => {
         await chrome.storage.local.set(data)
+    },
+
+    remove: async (keys: Array<keyof typeof StorageKeys>) => {
+        await chrome.storage.local.remove(keys)
     }
 }
 
