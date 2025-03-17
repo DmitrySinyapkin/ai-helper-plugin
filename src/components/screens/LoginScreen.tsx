@@ -1,10 +1,12 @@
 import { FC } from "react"
 import { Box } from "@mui/material"
+import LoginForm from "../auth/LoginForm"
+
 
 const LoginScreen: FC = () => {
     return (
-        <Box>
-            <h1>Login Screen</h1>
+        <Box sx={{ height: 536, display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: "center" }}>
+            <LoginForm />
         </Box>
     )
 }

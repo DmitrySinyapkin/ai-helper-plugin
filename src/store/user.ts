@@ -1,12 +1,11 @@
 import { create } from 'zustand'
 import api from '../api/api'
 import { userInfoUrl, loginUrl } from '../api/endpoints'
-import chromeStorage from '../chromeStorage/storage'
+import chromeStorage from '../utils/chromeStorage'
 
 interface UserStore {
     user: User | null
     loading: boolean
-    isAuth: () => boolean
     getUser: () => void
     login: (email: string, password: string) => void
     logout: () => void
@@ -15,13 +14,12 @@ interface UserStore {
 const useUserStore = create<UserStore>((set, get) => ({
     user: null,
     loading: false,
-    isAuth: () => get().user !== null,
     getUser: async () => {
         set({ loading: true })
         try {
             const user: User = await api.get(userInfoUrl)
 
-            if (user.id) {
+            if (user?.id) {
                 set({ user, loading: false })
             } else {
                 throw new Error('User not found')
@@ -34,7 +32,7 @@ const useUserStore = create<UserStore>((set, get) => ({
         try {
             const token: Token = await api.post(loginUrl, { email, password })
 
-            if (token.access) {
+            if (token.access && token.refresh) {
                 await chromeStorage.set({ access: token.access, refresh: token.refresh })
                 get().getUser()
             }

@@ -10,8 +10,15 @@ export default defineConfig({
     assetsDir: '.',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        popup: resolve(__dirname, 'popup.html'),
+        background: resolve(__dirname, 'src', 'background.ts'),
       },
+      output: {
+        inlineDynamicImports: false,
+        format: 'es',
+        entryFileNames: '[name].js',
+        assetFileNames: '[name].[ext]',
+      }
     },
   },
   publicDir: 'public',

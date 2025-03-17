@@ -18,7 +18,7 @@ const items = [
     },
     {
         label: 'Profile',
-        to: Screens.register,
+        to: Screens.profile,
         icon: <AccountCircle />
     }
 ]

@@ -4,9 +4,9 @@ import AuthNavMenu from "./AuthNavMenu"
 import UserNavMenu from "./UserNavMenu"
 
 const UserMenu: FC = () => {
-    const { isAuth } = useUserStore()
+    const { user } = useUserStore()
 
-    if (!isAuth) {
+    if (user?.id) {
         return <UserNavMenu />
     }
 
