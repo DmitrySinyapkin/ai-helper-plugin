@@ -3,10 +3,17 @@ import { Box, Button, Avatar, Typography } from "@mui/material"
 import useUserStore from "../../store/user"
 import useAppStore, { Screens } from "../../store/app"
 import { deepOrange } from "@mui/material/colors"
+import useChatStore from "../../store/chat"
 
 const UserProfile: FC = () => {
     const { user, logout } = useUserStore()
     const { setScreen } = useAppStore()
+    const { clearHistory } = useChatStore()
+
+    const handleLogout = () => {
+        clearHistory()
+        logout()
+    }
 
     useEffect(() => {
         if (!user) {
@@ -20,7 +27,7 @@ const UserProfile: FC = () => {
                 <Avatar sx={{ bgcolor: deepOrange[500] }}>{ user?.email[0].toUpperCase() }</Avatar>
                 <Typography variant="h6" gutterBottom>{ user?.email }</Typography>
             </Box>
-            <Button sx={{ ml: 10 }} variant="contained" onClick={logout}>Log Out</Button>
+            <Button sx={{ ml: 10 }} variant="contained" onClick={handleLogout}>Log Out</Button>
         </Box>
     )
 }

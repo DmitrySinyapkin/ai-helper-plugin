@@ -1,6 +1,7 @@
 export enum StorageKeys {
     access = 'access',
     refresh = 'refresh',
+    chatHistory = 'chatHistory',
 }
 
 export type StorageData = {

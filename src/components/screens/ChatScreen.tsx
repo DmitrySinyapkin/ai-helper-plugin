@@ -1,10 +1,13 @@
 import { FC } from "react"
 import { Box } from "@mui/material"
+import ChatInput from "../chat/ChatInput"
+import ChatWindow from "../chat/ChatWindow"
 
 const ChatScreen: FC = () => {
     return (
-        <Box>
-            <h1>Chat Screen</h1>
+        <Box sx={{ height: 536, display: "flex", flexDirection: "column-reverse" }}>
+            <ChatInput />
+            <ChatWindow />
         </Box>
     )
 }

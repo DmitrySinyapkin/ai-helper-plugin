@@ -6,6 +6,7 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [react()],
   build: {
+    chunkSizeWarningLimit: 1500,
     outDir: 'dist',
     assetsDir: '.',
     rollupOptions: {

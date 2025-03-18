@@ -4,9 +4,11 @@ import Header from './components/header/Header'
 import ScreenRouter from './components/screens'
 import chromeStorage from './utils/chromeStorage'
 import useUserStore from './store/user'
+import useChatStore from './store/chat'
 
 function App() {
-  const { getUser } = useUserStore()
+  const { user, getUser } = useUserStore()
+  const { getHistory } = useChatStore()
 
   const init = async () => {
     const { access } = await chromeStorage.get(['access'])
@@ -14,6 +16,8 @@ function App() {
     if (access) {
       getUser()
     }
+
+    getHistory()
   }
 
   useEffect(() => {
