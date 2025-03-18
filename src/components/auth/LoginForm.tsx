@@ -1,11 +1,10 @@
-import { FC, useState, useEffect, MouseEvent } from "react"
+import { FC, useState, useEffect, MouseEvent, useTransition, FormEvent } from "react"
 import { Box, FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import FormSubmitButton from "../common/FormSubmitButton"
 import * as Yup from "yup"
-import { AxiosError } from "axios"
 import useUserStore from "../../store/user"
-import useAppStore, { Screens} from "../../store/app"
+import useAppStore, { Screens } from "../../store/app"
 
 interface FieldErrors {
     email?: string
@@ -28,28 +27,34 @@ const LoginForm: FC = () => {
 
     const schema = Yup.object({
         email: Yup.string().email("Invalid email").required(),
-        password: Yup.string().required(),
+        password: Yup.string().required().min(8),
     })
 
     const { login, user } = useUserStore()
     const { setScreen } = useAppStore()
 
-    const handleSubmit = async (formData: FormData) => {
+    const [isPending, startTransition] = useTransition()
+
+    const action = async (formData: FormData) => {
         const data = Object.fromEntries(formData.entries())
         try {
             await schema.validate(data, { abortEarly: false })
             setErrors({})
             
             login(formData.get('email') as string, formData.get('password') as string)
-        } catch (errors) {
-            if (errors instanceof Yup.ValidationError) {
-                setErrors(errors.inner.reduce((acc, error) => error.path ? {...acc, [error.path]: error.message} : acc, {}))
-            }
-            
-            if (errors instanceof AxiosError) {
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                setErrors(err.inner.reduce((acc, error) => error.path ? {...acc, [error.path]: error.message} : acc, {}))
+            } else {
                 setErrors({ email: "Invalid email or password" })
             }
         }
+    }
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        startTransition(() => action(formData))
     }
 
     useEffect(() => {
@@ -63,7 +68,7 @@ const LoginForm: FC = () => {
             <Typography variant="h3" gutterBottom>
                 Log In
             </Typography>
-            <form action={handleSubmit} style={{ display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: "center", gap: 20 }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: "center", gap: 20 }}>
                 <TextField 
                     id="email"
                     name="email"
@@ -98,7 +103,7 @@ const LoginForm: FC = () => {
                     />
                     <FormHelperText id="password-error-text">{errors.password}</FormHelperText>
                 </FormControl>
-                <FormSubmitButton label="Log In" />
+                <FormSubmitButton label="Log In" isPending={isPending} />
             </form>
         </Box>
     )
