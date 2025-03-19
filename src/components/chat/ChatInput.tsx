@@ -1,18 +1,25 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import { Box, TextField, IconButton, FormControlLabel, Switch } from "@mui/material"
 import SendIcon from '@mui/icons-material/Send'
 import useChatStore from "../../store/chat"
 
 const ChatInput: FC = () => {
     const { sendMessage } = useChatStore()
+    const [addition, setAddition] = useState<boolean>(false)
 
-    const handleSubmit = (formData: FormData) => {
+    const onAdditionChange = () => {
+        setAddition(!addition)
+    }
+
+    const handleSubmit = async (formData: FormData) => {
         const message = formData.get('message')
-        const addition = formData.get('addition')
         
         if (message) {
             if (addition) {
-                sendMessage(message as string)
+                const pageContent: PageContentPayload = await chrome.runtime.sendMessage({ type: 'getPageContent' })
+                if (pageContent.html && pageContent.url) {
+                    sendMessage(message as string, pageContent.url, pageContent.html)
+                }
             } else {
                 sendMessage(message as string)
             }
@@ -44,7 +51,10 @@ const ChatInput: FC = () => {
                         <SendIcon />
                     </IconButton>
                 </Box>
-                <FormControlLabel control={<Switch name="addition" />} label="Add page content to prompt" />
+                <FormControlLabel 
+                    control={<Switch value={addition} onChange={onAdditionChange} />} 
+                    label="Add page content to prompt" 
+                />
             </form>
         </Box>
     )
