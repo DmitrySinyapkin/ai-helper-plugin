@@ -1,5 +1,6 @@
 import { FC } from "react"
-import { Card, CardContent, CardActions, Typography, Button } from "@mui/material"
+import { Card, CardContent, CardActions, Typography, IconButton, Tooltip } from "@mui/material"
+import { NoteAdd } from "@mui/icons-material"
 import { blue  } from "@mui/material/colors"
 
 const ChatMessage: FC<Message> = ({ role, content, url }) => {
@@ -18,7 +19,11 @@ const ChatMessage: FC<Message> = ({ role, content, url }) => {
                 </Typography>
             </CardContent>
             {role !== 'user' && <CardActions>
-                <Button size="small" color="primary">Add to notes</Button>
+                <Tooltip title='Add to notes'>
+                    <IconButton size="small">
+                        <NoteAdd />
+                    </IconButton>
+                </Tooltip>
             </CardActions>}
         </Card>
     )
