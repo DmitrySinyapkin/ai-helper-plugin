@@ -15,22 +15,24 @@ const ChatWindow: FC = () => {
 
     useEffect(() => {
         scrollBottom()
-    }, [])
+    }, [messages])
 
     return (
-        <Box 
-            ref={windowRef}
-            sx={{ p: 1, flexGrow: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', bgcolor: blue[50] }}
-            component={'div'}
-        >
-            {messages.map((message: Message, index: number) => <ChatMessage
-                key={index}
-                role={message.role}
-                content={message.content}
-                url={message.url}
-            />)}
-            {pending && <CircularProgress sx={{ m: 1 }} />}
+        <Box ref={windowRef} sx={{ p:1, flexGrow: 1, overflowY: 'auto', bgcolor: blue[50] }}>
+            <Box    
+                sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                component={'div'}
+            >
+                {messages.map((message: Message, index: number) => <ChatMessage
+                    key={index}
+                    role={message.role}
+                    content={message.content}
+                    url={message.url}
+                />)}
+                {pending && <CircularProgress sx={{ m: 1 }} />}
+            </Box>
         </Box>
+        
     )
 }
 
