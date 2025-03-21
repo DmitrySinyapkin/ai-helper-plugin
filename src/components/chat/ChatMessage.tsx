@@ -17,7 +17,6 @@ const ChatMessage: FC<Message> = ({ role, content, url }) => {
         <Card 
             sx={{ 
                 maxWidth: '75%',
-                //mt: 2,
                 bgcolor: role === 'user' ? blue[100] : '#FFFFFF',
                 alignSelf: role === 'user' ? 'end' : 'start' 
             }}

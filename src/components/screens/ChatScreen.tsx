@@ -11,7 +11,7 @@ const ChatScreen: FC = () => {
     return (
         <Box sx={{ height: 536, position: 'relative' }}>
             <AiChat />
-            <FullscreenPopup show={openedNote !== null && mode !== null}>
+            <FullscreenPopup show={openedNote !== null && mode === 'edit'}>
                 <NoteEditForm />
             </FullscreenPopup>
         </Box>

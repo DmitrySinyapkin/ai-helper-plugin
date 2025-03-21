@@ -6,15 +6,23 @@ import Tooltip from '@mui/material/Tooltip'
 
 interface Props {
     label: string
-    to: Screen
+    to?: Screen
+    onClick?: Function
     icon?: ReactElement 
 }
 
-const NavButton: FC<Props> = ({ label, to, icon }) => {
+const NavButton: FC<Props> = ({ label, to, icon, onClick }) => {
     const { setScreen } = useAppStore()
 
     const handleClick = () => {
-        setScreen(to)
+        if (to) {
+            setScreen(to)
+            return
+        }
+
+        if (onClick) {
+            onClick()
+        }
     }
 
     if (icon) {

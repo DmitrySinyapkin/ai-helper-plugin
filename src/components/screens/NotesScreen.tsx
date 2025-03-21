@@ -1,10 +1,11 @@
 import { FC } from "react"
 import { Box } from "@mui/material"
+import NoteList from "../notes/NoteList"
 
 const NotesScreen: FC = () => {
     return (
-        <Box>
-            <h1>Notes Screen</h1>
+        <Box sx={{ height: 536 }}>
+            <NoteList />
         </Box>
     )
 }

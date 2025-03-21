@@ -5,7 +5,8 @@ import { Screen } from "../../store/app"
 
 interface Item {
     label: string
-    to: Screen
+    to?: Screen
+    onClick?: Function
     icon?: ReactElement 
 }
 
@@ -21,6 +22,7 @@ const NavMenu: FC<Props> = ({ items }) => {
                     key={item.label}
                     label={item.label}
                     to={item.to}
+                    onClick={item.onClick}
                     icon={item.icon}
                 />
             ))}
