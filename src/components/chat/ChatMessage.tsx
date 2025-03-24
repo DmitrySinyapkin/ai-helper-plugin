@@ -22,14 +22,14 @@ const ChatMessage: FC<Message> = ({ role, content, url }) => {
             }}
         >
             <CardContent>
-                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                <Typography variant="caption" sx={{ whiteSpace: 'pre-wrap' }}>
                     {content}
                 </Typography>
             </CardContent>
             {role !== 'user' && <CardActions>
                 <Tooltip title={user ? 'Add to notes' : 'Add to notes (login to add)'}>
                     <span>
-                        <IconButton size="small" disabled={!user} onClick={handleAddToNotesClick}>
+                        <IconButton size="small" color="primary" disabled={!user} onClick={handleAddToNotesClick}>
                             <NoteAdd />
                         </IconButton>
                     </span>

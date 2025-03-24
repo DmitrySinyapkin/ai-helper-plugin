@@ -7,14 +7,18 @@ interface Item {
     label: string
     to?: Screen
     onClick?: Function
-    icon?: ReactElement 
+    icon?: ReactElement
+    size?: "small" | "medium" | "large"
+    color?: "inherit" | "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning"
 }
 
 interface Props {
     items: Item[]
+    size?: "small" | "medium" | "large"
+    color?: "inherit" | "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning"
 }
 
-const NavMenu: FC<Props> = ({ items }) => {
+const NavMenu: FC<Props> = ({ items, size, color }) => {
     return (
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {items.map((item) => (
@@ -24,6 +28,8 @@ const NavMenu: FC<Props> = ({ items }) => {
                     to={item.to}
                     onClick={item.onClick}
                     icon={item.icon}
+                    size={item.size || size}
+                    color={item.color || color}
                 />
             ))}
         </Box>

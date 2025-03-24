@@ -8,10 +8,12 @@ interface Props {
     label: string
     to?: Screen
     onClick?: Function
-    icon?: ReactElement 
+    icon?: ReactElement
+    size?: "small" | "large" | "medium"
+    color?: "inherit" | "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" 
 }
 
-const NavButton: FC<Props> = ({ label, to, icon, onClick }) => {
+const NavButton: FC<Props> = ({ label, to, icon, size, color, onClick }) => {
     const { setScreen } = useAppStore()
 
     const handleClick = () => {
@@ -28,7 +30,7 @@ const NavButton: FC<Props> = ({ label, to, icon, onClick }) => {
     if (icon) {
         return (
             <Tooltip title={label}>
-                <IconButton size="large" color="inherit" onClick={handleClick}>
+                <IconButton size={size || "large"} color={color ||"inherit"} onClick={handleClick}>
                     {icon}
                 </IconButton>
             </Tooltip>
