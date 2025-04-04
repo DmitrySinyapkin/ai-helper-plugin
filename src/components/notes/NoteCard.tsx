@@ -37,11 +37,11 @@ const NoteCard: FC<Props> = ({ note }) => {
             icon: <EditNote />,
             onClick: handleEdit
         },
-        {
+        /* {
             label: "Add note to prompt",
             icon: <Feedback />,
             onClick: () => {}
-        },
+        }, */
         {
             label: "Delete note",
             icon: <Delete />,

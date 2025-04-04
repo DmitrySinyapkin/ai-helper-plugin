@@ -18,10 +18,10 @@ const ChatInput: FC = () => {
             if (addition) {
                 const pageContent: PageContentPayload = await chrome.runtime.sendMessage({ type: 'getPageContent' })
                 if (pageContent.html && pageContent.url) {
-                    sendMessage(message as string, pageContent.url, pageContent.html)
+                    sendMessage(message as string, pageContent.url, pageContent.html, true)
                 }
             } else {
-                sendMessage(message as string)
+                sendMessage(message as string, '', '', true)
             }
         }
     }
