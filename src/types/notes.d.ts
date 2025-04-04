@@ -6,3 +6,5 @@ interface Note {
     content: string
     title: string
 }
+
+type NoteFilters = 'url' 

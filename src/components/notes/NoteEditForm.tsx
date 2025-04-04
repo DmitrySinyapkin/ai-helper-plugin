@@ -6,6 +6,7 @@ import FormSubmitButton from "../common/FormSubmitButton"
 
 interface Errors {
     content?: string
+    url?: string
 }
 
 const NoteEditForm: FC = () => {
@@ -15,7 +16,7 @@ const NoteEditForm: FC = () => {
 
     const schema = Yup.object({
         title: Yup.string(),
-        url: Yup.string(),
+        url: Yup.string().url(),
         content: Yup.string().required()
     })
 
@@ -83,6 +84,8 @@ const NoteEditForm: FC = () => {
                 defaultValue={openedNote?.url || ''}
                 variant="standard"
                 fullWidth
+                error={errors.url ? true : false}
+                helperText={errors.url}
             />
             <TextField
                 id="content"

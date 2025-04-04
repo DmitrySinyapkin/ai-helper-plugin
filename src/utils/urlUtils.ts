@@ -1,7 +1,8 @@
 export const getOriginFromUrlString = (str: string) => {
-    if (str) {
+    try {
         const url = new URL(str)
         return url.origin
+    } catch {
+        return ''
     }
-    return ''
 }
