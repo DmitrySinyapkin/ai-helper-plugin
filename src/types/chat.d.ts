@@ -2,6 +2,7 @@ interface Message {
     role: string
     content: string | null
     url?: string
+    isError?: boolean
 }
 
 interface Choice {

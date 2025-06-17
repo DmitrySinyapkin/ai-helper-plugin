@@ -23,6 +23,7 @@ api.interceptors.response.use(function (response) {
         }
         return api(originalRequest)
     }
+    return Promise.reject(error)
 })
 
 api.interceptors.request.use(async function (config) {

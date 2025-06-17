@@ -28,10 +28,20 @@ const useChatStore = create<ChatStore>((set, get) => ({
             if (response?.choices?.length && response.choices.length > 0) {
                 set({ messages: [...get().messages, {...response.choices[0].message, url: url || ''}] })
             } else {
-                set({ messages: [...get().messages, {role: 'assistant', content: 'Error during getting response', url: url || ''}] })
+                set({ messages: [...get().messages, {role: 'assistant', content: 'Error during getting response', url: url || '', isError: true}] })
             }
-        } catch (error) {
-            set({ messages: [...get().messages, {role: 'assistant', content: 'Error during getting response', url: url || ''}] })
+        } catch (error: any) {
+            let errorMessage = 'Error during getting response'
+            
+            if (error?.response?.data?.message) {
+                errorMessage = error.response.data.message
+            } else if (error?.message) {
+                errorMessage = error.message
+            } else if (typeof error === 'string') {
+                errorMessage = error
+            }
+            
+            set({ messages: [...get().messages, {role: 'assistant', content: errorMessage, url: url || '', isError: true}] })
         }
         await chromeStorage.set({ chatHistory: JSON.stringify(get().messages) })
         set({ pending: false })
