@@ -28,6 +28,7 @@ const ChatWindow: FC = () => {
                     role={message.role}
                     content={message.content}
                     url={message.url}
+                    isError={message.isError}
                 />)}
                 {pending && <CircularProgress sx={{ m: 1 }} />}
             </Box>
