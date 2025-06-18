@@ -76,7 +76,7 @@ const NoteCard: FC<Props> = ({ note }) => {
                     variant="caption" 
                     color="text.secondary"
                     sx={showContent
-                        ? { overflow : 'visible' }
+                        ? { overflow : 'visible', whiteSpace: 'pre-wrap' }
                         : { overflow : 'hidden',
                             textOverflow: 'ellipsis',
                             display: '-webkit-box',
