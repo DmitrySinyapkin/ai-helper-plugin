@@ -1,5 +1,5 @@
-import { FC, useState, useEffect, MouseEvent, useTransition, FormEvent } from "react"
-import { Box, FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@mui/material"
+import { FC, useState, useEffect, MouseEvent, FormEvent } from "react"
+import { Box, FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLabel, TextField, Typography, Alert } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import FormSubmitButton from "../common/FormSubmitButton"
 import * as Yup from "yup"
@@ -13,6 +13,7 @@ interface FieldErrors {
 
 const LoginForm: FC = () => {
     const [errors, setErrors] = useState<FieldErrors>({})
+    const [networkError, setNetworkError] = useState<string | null>(null)
     const [showPassword, setShowPassword] = useState(false)
 
     const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -30,31 +31,30 @@ const LoginForm: FC = () => {
         password: Yup.string().required().min(8),
     })
 
-    const { login, user } = useUserStore()
+    const { login, user, loading } = useUserStore()
     const { setScreen } = useAppStore()
-
-    const [isPending, startTransition] = useTransition()
 
     const action = async (formData: FormData) => {
         const data = Object.fromEntries(formData.entries())
         try {
             await schema.validate(data, { abortEarly: false })
             setErrors({})
+            setNetworkError(null)
             
-            login(formData.get('email') as string, formData.get('password') as string)
+            await login(formData.get('email') as string, formData.get('password') as string)
         } catch (err) {
             if (err instanceof Yup.ValidationError) {
                 setErrors(err.inner.reduce((acc, error) => error.path ? {...acc, [error.path]: error.message} : acc, {}))
             } else {
-                setErrors({ email: "Invalid email or password" })
+                setNetworkError(err instanceof Error ? err.message : String(err))
             }
         }
     }
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
-        startTransition(() => action(formData))
+        await action(formData)
     }
 
     useEffect(() => {
@@ -69,6 +69,11 @@ const LoginForm: FC = () => {
                 Log In
             </Typography>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: "center", gap: 20 }}>
+                {networkError && (
+                    <Alert severity="error" sx={{ width: '100%' }}>
+                        {networkError}
+                    </Alert>
+                )}
                 <TextField 
                     id="email"
                     name="email"
@@ -103,7 +108,7 @@ const LoginForm: FC = () => {
                     />
                     <FormHelperText id="password-error-text">{errors.password}</FormHelperText>
                 </FormControl>
-                <FormSubmitButton label="Log In" isPending={isPending} />
+                <FormSubmitButton label="Log In" isPending={loading} />
             </form>
         </Box>
     )

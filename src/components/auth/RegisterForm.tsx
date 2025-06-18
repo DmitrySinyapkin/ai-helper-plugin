@@ -1,5 +1,5 @@
-import { FC, useState, useEffect, MouseEvent, useTransition, FormEvent } from "react"
-import { Box, FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLabel, TextField, Typography } from "@mui/material"
+import { FC, useState, useEffect, MouseEvent, FormEvent } from "react"
+import { Box, FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLabel, TextField, Typography, Alert } from "@mui/material"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import FormSubmitButton from "../common/FormSubmitButton"
 import * as Yup from "yup"
@@ -14,6 +14,7 @@ interface FieldErrors {
 
 const RegisterForm: FC = () => {
     const [errors, setErrors] = useState<FieldErrors>({})
+    const [networkError, setNetworkError] = useState<string | null>(null)
     const [showPassword, setShowPassword] = useState(false)
     const [showRepeatPassword, setShowRepeatPassword] = useState(false)
 
@@ -34,32 +35,31 @@ const RegisterForm: FC = () => {
         repeatPassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match'),
     })
 
-    const { registerUser, user } = useUserStore()
+    const { registerUser, user, loading } = useUserStore()
     const { setScreen } = useAppStore()
-
-    const [isPending, startTransition] = useTransition()
 
     const action = async (formData: FormData) => {
         const data = Object.fromEntries(formData.entries())
         try {
             await schema.validate(data, { abortEarly: false })
             setErrors({})
+            setNetworkError(null)
             
-            registerUser(formData.get('email') as string, formData.get('password') as string)
+            await registerUser(formData.get('email') as string, formData.get('password') as string)
         } catch (errors) {
             if (errors instanceof Yup.ValidationError) {
                 setErrors(errors.inner.reduce((acc, error) => error.path ? {...acc, [error.path]: error.message} : acc, {}))
             } else {
-                setErrors({ email: "Error during user registration" })
+                setNetworkError(errors instanceof Error ? errors.message : String(errors))
             }
         }
     }
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-            event.preventDefault()
-            const formData = new FormData(event.currentTarget)
-            startTransition(() => action(formData))
-        }
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        await action(formData)
+    }
 
     useEffect(() => {
         if (user?.id) {
@@ -73,6 +73,11 @@ const RegisterForm: FC = () => {
                 Sign Up
             </Typography>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", justifyContent: 'center', alignItems: "center", gap: 20 }}>
+                {networkError && (
+                    <Alert severity="error" sx={{ width: '100%' }}>
+                        {networkError}
+                    </Alert>
+                )}
                 <TextField 
                     id="email"
                     name="email"
@@ -132,7 +137,7 @@ const RegisterForm: FC = () => {
                     />
                     <FormHelperText id="repeat-password-error-text">{errors.repeatPassword}</FormHelperText>
                 </FormControl>
-                <FormSubmitButton label="Sign Up" isPending={isPending} />
+                <FormSubmitButton label="Sign Up" isPending={loading} />
             </form>
         </Box>
     )
