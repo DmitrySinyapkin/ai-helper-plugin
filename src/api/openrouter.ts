@@ -1,5 +1,6 @@
 import OpenAI from "openai"
 import { ChatCompletion } from "openai/resources.mjs"
+import axios from 'axios'
 
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1'
 
@@ -14,6 +15,14 @@ const openai = new OpenAI({
     apiKey: import.meta.env.VITE_OPENROUTER_API_KEY,
     dangerouslyAllowBrowser: true
 })
+
+export const getAvailableModels = async (): Promise<OpenRouterModel[]> => {
+    const response = await axios.get(`${OPENROUTER_BASE_URL}/models`)
+    const models = response.data.data
+        .filter((model: OpenRouterModel) => model.id.includes(':free'))
+        .sort((a: OpenRouterModel, b: OpenRouterModel) => b.context_length - a.context_length)
+    return models
+}
 
 export const getChatCompletion = async (prompt: string, model: string = MODELS[0]): Promise<Partial<ChatCompletion> | null> => {
     try {

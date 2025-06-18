@@ -2,33 +2,43 @@ import { create } from 'zustand'
 import api from '../api/api'
 import { chatUrl } from '../api/endpoints'
 import chromeStorage from '../utils/chromeStorage'
-import { getChatCompletion } from '../api/openrouter'
+import { getAvailableModels, getChatCompletion } from '../api/openrouter'
+import OpenAI from 'openai'
 
 interface ChatStore {
     messages: Message[]
     pending: boolean
+    models: OpenRouterModel[]
+    selectedModel: string | null
     sendMessage: (message: string, url?: string, html?: string, direct?: boolean) => void
     getHistory: () => void
     clearHistory: () => void
+    getModels: () => Promise<void>
+    setSelectedModel: (model: string) => void
 }
 
 const useChatStore = create<ChatStore>((set, get) => ({
     messages: [],
     pending: false,
+    models: [],
+    selectedModel: null,
     sendMessage: async (message: string, url?: string, html?: string, direct: boolean = false) => {
         set({
             messages: [...get().messages, {role: 'user', content: message, url: url || ''}],
             pending: true
         })
         try {
-            const prompt = html ? `${message}\n\n${html}` : message
-            //const response: ChatCompletion = await api.post(chatUrl, { prompt })
-            const response: Partial<ChatCompletion> | null = direct ? await getChatCompletion(prompt) : await api.post(chatUrl, { prompt })
+            if (get().selectedModel) {
+                const prompt = html ? `${message}\n\n${html}` : message
+                const response: Partial<ChatCompletion> | null = direct ? 
+                    await getChatCompletion(prompt, get().selectedModel!) : 
+                    await api.post(chatUrl, { prompt })
 
-            if (response?.choices?.length && response.choices.length > 0) {
-                set({ messages: [...get().messages, {...response.choices[0].message, url: url || ''}] })
-            } else {
-                set({ messages: [...get().messages, {role: 'assistant', content: 'Error during getting response', url: url || '', isError: true}] })
+                if (response?.choices?.length && response.choices.length > 0) {
+                    set({ messages: [...get().messages, {...response.choices[0].message, url: url || ''}] })
+                } else {
+                    set({ messages: [...get().messages, {role: 'assistant', content: 'Error during getting response', url: url || '', isError: true}] })
+                }
             }
         } catch (error: any) {
             let errorMessage = 'Error during getting response'
@@ -56,6 +66,13 @@ const useChatStore = create<ChatStore>((set, get) => ({
         await chromeStorage.remove(['chatHistory'])
         set({ messages: [] })
     },
+    getModels: async () => {
+        const models = await getAvailableModels()
+        set({ models, selectedModel: models[0].id })
+    },
+    setSelectedModel: (model: string) => {
+        set({ selectedModel: model })
+    }
 }))
 
 export default useChatStore

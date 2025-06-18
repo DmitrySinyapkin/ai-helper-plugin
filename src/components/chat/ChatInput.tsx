@@ -1,7 +1,8 @@
 import { FC, useState } from "react"
-import { Box, TextField, IconButton, FormControlLabel, Switch } from "@mui/material"
+import { Box, TextField, IconButton, FormControlLabel, Switch, Typography } from "@mui/material"
 import SendIcon from '@mui/icons-material/Send'
 import useChatStore from "../../store/chat"
+import ModelSelector from "./ModelSelector"
 
 const ChatInput: FC = () => {
     const { sendMessage } = useChatStore()
@@ -51,10 +52,13 @@ const ChatInput: FC = () => {
                         <SendIcon />
                     </IconButton>
                 </Box>
-                <FormControlLabel 
-                    control={<Switch value={addition} onChange={onAdditionChange} />} 
-                    label="Add page content to prompt" 
-                />
+                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2, justifyContent: 'space-between' }}>
+                    <FormControlLabel
+                        control={<Switch checked={addition} onChange={onAdditionChange} />}
+                        label={<Typography variant="caption">Add page content to prompt</Typography>}
+                    />
+                    <ModelSelector />
+                </Box>
             </form>
         </Box>
     )
