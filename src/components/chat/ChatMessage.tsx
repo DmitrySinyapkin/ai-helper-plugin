@@ -1,11 +1,13 @@
 import { FC } from "react"
 import { Card, CardContent, CardActions, Typography, IconButton, Tooltip } from "@mui/material"
-import { NoteAdd } from "@mui/icons-material"
+import { NoteAdd, Delete } from "@mui/icons-material"
 import { blue, red } from "@mui/material/colors"
 import useUserStore from "../../store/user"
 import useNotesStore from "../../store/notes"
 
-const ChatMessage: FC<Message> = ({ role, content, url, isError }) => {
+type ChatMessageProps = Message & { onDelete?: () => void }
+
+const ChatMessage: FC<ChatMessageProps> = ({ role, content, url, isError, onDelete }) => {
     const { user } = useUserStore()
     const { editNote } = useNotesStore()
 
@@ -32,15 +34,24 @@ const ChatMessage: FC<Message> = ({ role, content, url, isError }) => {
                     {content}
                 </Typography>
             </CardContent>
-            {role !== 'user' && !isError && <CardActions>
-                <Tooltip title={user ? 'Add to notes' : 'Add to notes (login to add)'}>
+            <CardActions sx={{ justifyContent: 'flex-end', gap: 1 }}>
+                <Tooltip title="Delete message">
                     <span>
-                        <IconButton size="small" color="primary" disabled={!user} onClick={handleAddToNotesClick}>
-                            <NoteAdd />
+                        <IconButton size="small" color="error" onClick={onDelete}>
+                            <Delete />
                         </IconButton>
                     </span>
                 </Tooltip>
-            </CardActions>}
+                {role !== 'user' && !isError && (
+                    <Tooltip title={user ? 'Add to notes' : 'Add to notes (login to add)'}>
+                        <span>
+                            <IconButton size="small" color="primary" disabled={!user} onClick={handleAddToNotesClick}>
+                                <NoteAdd />
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                )}
+            </CardActions>
         </Card>
     )
 }

@@ -5,7 +5,7 @@ import useChatStore from "../../store/chat"
 import { blue  } from "@mui/material/colors"
 
 const ChatWindow: FC = () => {
-    const { messages, pending } = useChatStore()
+    const { messages, pending, deleteMessage } = useChatStore()
 
     const windowRef = useRef<Element>(null)
 
@@ -29,6 +29,7 @@ const ChatWindow: FC = () => {
                     content={message.content}
                     url={message.url}
                     isError={message.isError}
+                    onDelete={() => deleteMessage(index)}
                 />)}
                 {pending && <CircularProgress sx={{ m: 1 }} />}
             </Box>
