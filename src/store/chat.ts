@@ -15,6 +15,7 @@ interface ChatStore {
     clearHistory: () => void
     getModels: () => Promise<void>
     setSelectedModel: (model: string) => void
+    deleteMessage: (index: number) => void
 }
 
 const useChatStore = create<ChatStore>((set, get) => ({
@@ -72,6 +73,11 @@ const useChatStore = create<ChatStore>((set, get) => ({
     },
     setSelectedModel: (model: string) => {
         set({ selectedModel: model })
+    },
+    deleteMessage: async (index: number) => {
+        const messages = get().messages.filter((_, i) => i !== index)
+        set({ messages })
+        await chromeStorage.set({ chatHistory: JSON.stringify(messages) })
     }
 }))
 
